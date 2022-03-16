@@ -2,10 +2,16 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PlataformaDeEstagio.Application_Context;
+using PlataformaDeEstagio.Repository;
+using PlataformaDeEstagio.Repository.Interface;
+using PlataformaDeEstagio.Services;
+using PlataformaDeEstagio.Services.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +32,13 @@ namespace PlataformaDeEstagio
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddDbContext<ApplicationContext>(options =>
+            options.UseMySql(Configuration.GetConnectionString("ApplicationContext"),
+                 builder => builder.MigrationsAssembly("PlataformaDeEstagio")));
+
+            services.AddTransient<IEmpresaRepository, EmpresaRepository>();
+            services.AddTransient<IEmpresaService, EmpresaService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
